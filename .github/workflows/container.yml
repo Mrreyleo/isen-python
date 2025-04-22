@@ -25,4 +25,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: user/app:latest,user/app:${{ github.sha }}
+          tags: mrreyleo/isen-python:latest,mrreyleo/isen-python:${{ github.sha }}
