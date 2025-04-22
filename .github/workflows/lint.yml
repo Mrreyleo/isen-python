@@ -20,5 +20,5 @@ jobs:
                 pip install -r requirements.txt
             - name: Analyze code with pylint
               run: |
-                pylint --failer-under=7 --disable=C,R0801 $(git ls-files '*.py')
+                pylint --fail-under=7 --disable=C,R0801 $(git ls-files '*.py')
             
