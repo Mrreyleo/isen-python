@@ -30,7 +30,7 @@ jobs:
         uses: aquasecurity/setup-trivy@v0.2.0
         with: 
             cache: true
-            version: v0.60.1
+            version: latest
       - name: Run Trivy vulnerability scanner in repo mode
         continue-on-error: true
         uses: aquasecurity/trivy-action@master
