@@ -26,4 +26,4 @@ jobs:
 
     - name: Run pylint
       run: |
-        pylint $(find . -name "*.py")
+        pylint $(git ls-files '*.py')
