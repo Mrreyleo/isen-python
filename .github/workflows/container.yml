@@ -55,3 +55,4 @@ jobs:
           uses: anchore/sbom-action@v0
           with: 
             image: '${{ vars.DOCKERHUB_USERNAME }}/isen-python:latest'
+            format: 'syft-json'
