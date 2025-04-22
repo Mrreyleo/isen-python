@@ -21,23 +21,29 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/isen-python:latest,${{ vars.DOCKERHUB_USERNAME }}/isen-python:${{ github.sha }}
-      - name: Manual trivy setup
+
+  trivy:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Trivy
         uses: aquasecurity/setup-trivy@v0.2.0
-        with: 
-            cache: true
-            version: latest
-      - name: Run Trivy vulnerability scanner in repo mode
+        with:
+          cache: true
+          version: latest
+
+      - name: Run Trivy vulnerability scanner on Docker image
         continue-on-error: true
         uses: aquasecurity/trivy-action@master
         with:
-            image-ref: '${{ vars.DOCKERHUB_USERNAME }}/isen-python:latest'
-            ignore-unfixed: true
-            format: 'sarif'
-            output: 'trivy-results.sarif'
-            severity: 'CRITICAL, HIGH'
-            skip-setup-trivy: true
+          image-ref: '${{ vars.DOCKERHUB_USERNAME }}/isen-python:latest'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          skip-setup-trivy: true
