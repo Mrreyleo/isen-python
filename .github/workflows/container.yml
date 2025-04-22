@@ -47,12 +47,35 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
           skip-setup-trivy: true
+
   syft:
     needs: docker
     runs-on: ubuntu-latest
     steps:
-        - name: Set up Syft
-          uses: anchore/sbom-action@v0
-          with: 
-            image: '${{ vars.DOCKERHUB_USERNAME }}/isen-python:latest'
-            format: 'syft-json'
+      - name: Generate SBOM with Syft
+        uses: anchore/sbom-action@v0
+        with: 
+          image: '${{ vars.DOCKERHUB_USERNAME }}/isen-python:latest'
+          format: 'syft-json'
+          output-file: 'syft.sbom.json'
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: syft-sbom
+          path: syft.sbom.json
+
+  grype:
+    needs: syft
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download SBOM artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: syft-sbom
+          path: .
+
+      - name: Scan SBOM with Grype
+        uses: anchore/scan-action@v6
+        with:
+          sbom: 'syft.sbom.json'
