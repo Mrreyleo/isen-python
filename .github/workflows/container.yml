@@ -1,0 +1,74 @@
+name: Container registry
+
+on: [push]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/isen-python:latest,${{ vars.DOCKERHUB_USERNAME }}/isen-python:${{ github.sha }}
+
+  trivy:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Trivy
+        uses: aquasecurity/setup-trivy@v0.2.0
+        with:
+          cache: true
+          version: latest
+
+      - name: Run Trivy vulnerability scanner on Docker image
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ vars.DOCKERHUB_USERNAME }}/isen-python:latest'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          skip-setup-trivy: true
+
+  sbom:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate SBOM with Syft
+        uses: anchore/sbom-action@v0
+        with:
+          image: '${{ vars.DOCKERHUB_USERNAME }}/isen-python:latest'
+          format: 'spdx-json'
+          output-file: 'sbom.spdx.json'
+
+      - name: Scan SBOM with Grype
+        continue-on-error: true
+        uses: anchore/scan-action@v6
+        with:
+          sbom: 'sbom.spdx.json'
+          output-format: 'sarif'
+          output-file: 'grype-results.sarif'
+
+      - name: Upload Grype results
+        uses: actions/upload-artifact@v4
+        with:
+          name: grype-results
+          path: grype-results.sarif

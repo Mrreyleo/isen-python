@@ -1,0 +1,46 @@
+name: Pytest
+
+on: [push]
+
+jobs:
+    unitTests:
+        runs-on: ubuntu-latest
+        name: Unit tests
+        env:
+            SECRET_PRODUCTION_KEY: ${{ secrets.PRODUCTION_KEY }}
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Set up Python 3.9
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.9
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip
+                pip install pytest
+                pip install -r requirements.txt
+            - name: Run tests with pytest
+              run: |
+                pytest ./unit_tests/ 
+                
+    integrationTests:
+        runs-on: ubuntu-latest
+        name: Integration tests
+        env:
+            SECRET_PRODUCTION_KEY: ${{ secrets.PRODUCTION_KEY }}
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Set up Python 3.9
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.9
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip
+                pip install pytest
+                pip install -r requirements.txt
+            - name: Run tests with pytest
+              run: |
+                pytest ./integration_tests/
