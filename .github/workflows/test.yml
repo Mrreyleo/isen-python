@@ -6,6 +6,8 @@ jobs:
     tests:
         runs-on: ubuntu-latest
         name: pytest
+        env : 
+          PRODUCTION_KEY: ${{secrets.PRODUCTION_KEY}}
         steps:
             - name: Checkout code
               uses: actions/checkout@v2
