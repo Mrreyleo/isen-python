@@ -2,6 +2,7 @@ name: Cypress tests
 
 on:
   push:
+    branches: [ main ]
 
 jobs:
   cypress-run:
