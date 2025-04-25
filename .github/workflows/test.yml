@@ -7,7 +7,7 @@ jobs:
         runs-on: ubuntu-latest
         name: Unit tests
         env:
-            SECRET_PRODUCTION_KEY: ${{ secrets.PRODUCTION_KEY }}
+            PRODUCTION_KEY: ${{ secrets.PRODUCTION_KEY }}
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
         runs-on: ubuntu-latest
         name: Integration tests
         env:
-            SECRET_PRODUCTION_KEY: ${{ secrets.PRODUCTION_KEY }}
+            PRODUCTION_KEY: ${{ secrets.PRODUCTION_KEY }}
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
