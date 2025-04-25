@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 from django.urls import reverse 
 from django.test import Client
 from pytest_django.asserts import assertTemplateUsed
