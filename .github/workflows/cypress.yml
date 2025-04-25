@@ -1,0 +1,36 @@
+name: Cypress tests
+
+on:
+  push:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    env:
+        PRODUCTION_KEY: ${{secrets.PRODUCTION_KEY}}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Start Django server
+        run: |
+          python3 manage.py runserver 127.0.0.1:8080 &
+          sleep 10  # Give server time to start
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          # Remove the 'start' parameter completely since you're already starting the server
+          wait-on: 'http://localhost:8080'
+          wait-on-timeout: 60
+          config: baseUrl=http://localhost:8080
