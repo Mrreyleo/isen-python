@@ -25,6 +25,13 @@
           PRODUCTS
         </h2>
       </div>
+      <form method="get" class="mb-5 text-center">
+        <label for="min_price">Min Price:</label>
+        <input type="number" name="min_price" id="min_price" value="{{ request.GET.min_price }}" step="0.01">
+        <label for="max_price">Max Price:</label>
+        <input type="number" name="max_price" id="max_price" value="{{ request.GET.max_price }}" step="0.01">
+        <button type="submit" class="btn btn-secondary ml-2">Filter</button>
+      </form>      
       <!-- Icon Divider-->
       <div class="divider-custom">
         <div class="divider-custom-line"></div>
