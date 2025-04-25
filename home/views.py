@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from products.models import Product
+from decimal import Decimal, InvalidOperation
 
 # Redirection de la racine vers /home/
 def RedirectHomeView(request):
@@ -9,13 +10,11 @@ def RedirectHomeView(request):
     '''
     return redirect('home')
 
+
 class HomeView(ListView):
-    '''
-    Renders la page d'accueil avec tous les produits
-    '''
     template_name = 'home.html'
     model = Product
-    context_object_name = 'object_list'  # Cette variable sera utilisée dans le template pour les produits
+    context_object_name = 'object_list'
 
     def get(self, request):
         min_price = request.GET.get('min_price')
@@ -23,15 +22,15 @@ class HomeView(ListView):
 
         queryset = Product.objects.all()
 
-        # Appliquer les filtres si les paramètres sont fournis
-        if min_price:
-            queryset = queryset.filter(price__gte=min_price)  # Filtrer les produits dont le prix est >= min_price
-        if max_price:
-            queryset = queryset.filter(price__lte=max_price)  # Filtrer les produits dont le prix est <= max_price
+        try:
+            if min_price:
+                queryset = queryset.filter(price__gte=Decimal(min_price))
+            if max_price:
+                queryset = queryset.filter(price__lte=Decimal(max_price))
+        except (InvalidOperation, ValueError):
+            # En cas de filtre invalide, ignorer simplement les filtres
+            queryset = Product.objects.none()
 
-        # Affecter la liste filtrée ou non filtrée à l'objet 'object_list'
         self.object_list = queryset
-
-        # Rendre la page avec les produits filtrés ou non
         context = self.get_context_data(object_list=self.object_list)
         return self.render_to_response(context)
