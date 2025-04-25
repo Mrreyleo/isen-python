@@ -17,12 +17,10 @@ class HomeView(ListView):
     model = Product
     context_object_name = 'object_list'  # Cette variable sera utilisée dans le template pour les produits
 
-    def get(self, request, *args, **kwargs):
-        # Récupérer les paramètres de prix dans la requête GET
+    def get(self, request):
         min_price = request.GET.get('min_price')
         max_price = request.GET.get('max_price')
 
-        # Récupérer les produits sans filtrer au départ
         queryset = Product.objects.all()
 
         # Appliquer les filtres si les paramètres sont fournis
