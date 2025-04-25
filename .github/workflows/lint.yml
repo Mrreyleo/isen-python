@@ -30,5 +30,7 @@ jobs:
             - name: Lint Dockerfile
               uses: hadolint/hadolint-action@master
               with:
-                dockerfile: "Dockerfile"   
+                dockerfile: "Dockerfile"  
+                format: codeclimate
+                failure-threshold: warning 
             
