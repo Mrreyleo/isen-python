@@ -6,6 +6,8 @@ on:
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
+    env:
+        PRODUCTION_KEY: ${{secrets.PRODUCTION_KEY}}
 
     steps:
       - name: Checkout repository
