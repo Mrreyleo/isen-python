@@ -3,6 +3,7 @@ name: Pylint and Hadolint
 on: [push]
 
 jobs:
+
     pylint:
         runs-on: ubuntu-latest
         name: pylint

@@ -11,8 +11,10 @@ RUN apt-get update && \
 
 FROM build AS build-venv
 
+
 COPY requirements.txt /requirements.txt
 RUN /venv/bin/pip install --disable-pip-version-check -r /requirements.txt
+
 
 
 FROM gcr.io/distroless/python3-debian12:latest-amd64
@@ -23,6 +25,8 @@ WORKDIR /app
 COPY . .
 
 
+
 EXPOSE 8080
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
+
