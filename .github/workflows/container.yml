@@ -104,11 +104,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Authenticate to Google Cloud (Workload Identity Federation)
-        uses: google-github-actions/auth@v2
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v2'
         with:
-          workload_identity_provider: 'projects/1082973244683/locations/global/workloadIdentityPools/isen-python/providers/github'
-          service_account: 'leo-491@gen-lang-client-0759069195.iam.gserviceaccount.com'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
