@@ -96,16 +96,30 @@ jobs:
   deploy:
     needs: google
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud (Workload Identity Federation)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/1082973244683/locations/global/workloadIdentityPools/isen-python/providers/github'
+          service_account: 'leo-491@gen-lang-client-0759069195.iam.gserviceaccount.com'
+
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: 'hello-cloud-run' 
           image: 'europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest'
           region: 'europe-west1'
-          project_id: 'gen-lang-client-0759069195'  # AJOUTÉ ICI
+          project_id: 'gen-lang-client-0759069195'
 
       - name: Use output
         run: 'curl "${{ steps.deploy.outputs.url }}"'
+
 
 
