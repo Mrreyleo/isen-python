@@ -90,8 +90,8 @@ jobs:
       
       - name: Build and push to Google Artifact Registry
         run: |
-          docker build -t europe-west1-docker.pkg.dev/gen-lang-client-0759069195/my-pool/isen-python:latest .
-          docker push europe-west1-docker.pkg.dev/gen-lang-client-0759069195/my-pool/isen-python:latest
+          docker build -t europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest .
+          docker push europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest
 
   deploy:
     needs: google
@@ -102,7 +102,7 @@ jobs:
       uses: google-github-actions/deploy-cloudrun@v2
       with:
         service: 'hello-cloud-run' 
-        image: 'europe-west1-docker.pkg.dev/gen-lang-client-0759069195/my-pool/isen-python:latest'
+        image: 'europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest'
         region: 'europe-west1'  # Add this if not using default region
 
     - name: Use output
