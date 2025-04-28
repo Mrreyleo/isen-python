@@ -96,7 +96,7 @@ jobs:
         
       - name: Build and push to Google Artifact Registry
         run: |
-          docker build -t europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest .
+          docker build -t europe-west1-docker.pkg.dev/gen-lang-client-0759069195/my-pool/isen-python:latest .
           docker push europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest
 
   deploy:
