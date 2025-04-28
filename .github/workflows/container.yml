@@ -85,29 +85,32 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Authenticate to Google Cloud (Workload Identity Federation)
+        id: auth
         uses: google-github-actions/auth@v2
         with:
+        # Verify this path is correct in your Google Cloud Console
           workload_identity_provider: 'projects/gen-lang-client-0759069195/locations/global/workloadIdentityPools/isen-python/providers/github'
           service_account: 'leo-491@gen-lang-client-0759069195.iam.gserviceaccount.com'
-      
 
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
-        
+      
       - name: Build and push to Google Artifact Registry
         run: |
           docker build -t europe-west1-docker.pkg.dev/gen-lang-client-0759069195/my-pool/isen-python:latest .
-          docker push europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest
+          docker push europe-west1-docker.pkg.dev/gen-lang-client-0759069195/my-pool/isen-python:latest
 
   deploy:
     needs: google
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: 'hello-cloud-run' 
-          image: 'europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest'
+    - name: Deploy to Cloud Run
+      id: deploy
+      uses: google-github-actions/deploy-cloudrun@v2
+      with:
+        service: 'hello-cloud-run' 
+        image: 'europe-west1-docker.pkg.dev/gen-lang-client-0759069195/my-pool/isen-python:latest'
+        region: 'europe-west1'  # Add this if not using default region
 
-      - name: Use output
-        run: 'curl "${{ steps.deploy.outputs.url }}"'
+    - name: Use output
+      run: 'curl "${{ steps.deploy.outputs.url }}"'
