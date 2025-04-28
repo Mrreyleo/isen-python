@@ -76,21 +76,14 @@ jobs:
   google:
     needs: docker
     runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Authenticate to Google Cloud (Workload Identity Federation)
-        id: auth
-        uses: google-github-actions/auth@v2
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v2'
         with:
-        # Verify this path is correct in your Google Cloud Console
-          workload_identity_provider: 'projects/gen-lang-client-0759069195/locations/global/workloadIdentityPools/isen-python/providers/github'
-          service_account: 'leo-491@gen-lang-client-0759069195.iam.gserviceaccount.com'
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'  # Your service account key JSON stored as a GitHub secret
 
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
