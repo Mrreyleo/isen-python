@@ -97,13 +97,15 @@ jobs:
     needs: google
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy to Cloud Run
-      id: deploy
-      uses: google-github-actions/deploy-cloudrun@v2
-      with:
-        service: 'hello-cloud-run' 
-        image: 'europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest'
-        region: 'europe-west1'  # Add this if not using default region
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: 'hello-cloud-run' 
+          image: 'europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest'
+          region: 'europe-west1'
+          project_id: 'gen-lang-client-0759069195'  # AJOUTÉ ICI
 
-    - name: Use output
-      run: 'curl "${{ steps.deploy.outputs.url }}"'
+      - name: Use output
+        run: 'curl "${{ steps.deploy.outputs.url }}"'
+
+
