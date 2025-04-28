@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
-      id-token: 'write'  # Permissions for Workload Identity Federation
+      id-token: 'write'
 
     steps:
       - name: Checkout repository
@@ -87,8 +87,8 @@ jobs:
       - name: Authenticate to Google Cloud (Workload Identity Federation)
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-          service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/isen-python/providers/isen-python'
+          service_account: 'leo-491@gen-lang-client-0759069195.iam.gserviceaccount.com'
 
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
@@ -105,7 +105,7 @@ jobs:
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: 'hello-cloud-run'  # Change with your Cloud Run service name
+          service: 'hello-cloud-run' 
           image: 'europe-west1-docker.pkg.dev/gen-lang-client-0759069195/isen-python/isen-python:latest'
 
       - name: Use output
