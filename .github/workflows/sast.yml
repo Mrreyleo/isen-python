@@ -31,7 +31,7 @@ jobs:
     name: ZAP security scan
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up ZAP Docker container
         run: |
@@ -42,7 +42,7 @@ jobs:
           docker run -u zap -v $PWD:/zap/wrk:rw owasp/zap2docker-stable zap-baseline.py -t http://localhost:8080 -g gen.conf -r zap_report.html
 
       - name: Upload ZAP report to GitHub
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: zap-report
           path: zap_report.html
