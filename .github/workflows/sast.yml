@@ -1,9 +1,8 @@
 name: Bandit and ZAP
-
 on:
   push:
     branches:
-      - main  # Exécution uniquement sur la branche par défaut
+      - main
 
 jobs:
   tests:
@@ -30,7 +29,6 @@ jobs:
 
   zap_scan:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'  # Vérification supplémentaire pour la branche par défaut
     env:
         PRODUCTION_KEY: ${{secrets.PRODUCTION_KEY}}
 
@@ -38,35 +36,36 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
 
-      - name: Build and run application with Docker
+      - name: Install Python dependencies
         run: |
-          docker build -t my-django-app .
-          docker run -d -p 8080:8080 --name app-container my-django-app
-          sleep 15  # Attendre que l'application démarre
+          pip install -r requirements.txt
 
-      - name: Check if application is running
+      - name: Start Django server
         run: |
-          curl -s --retry 5 --retry-delay 5 --retry-connrefused http://localhost:8080/ || echo "Application is starting, continuing..."
+          python3 manage.py runserver 127.0.0.1:8080 &
+          sleep 10  # Give server time to start
+
 
       - name: Run ZAP security scan with zap-baseline-scan
         uses: zaproxy/action-baseline@v0.14.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }} 
           target: 'http://localhost:8080'
-          rules_file_name: '.zap/rules.tsv'
-          fail_action: false  # Ne pas faire échouer le workflow si le scan trouve des problèmes
+          fail_action: false 
           allow_issue_writing: false
-          cmd_options: '-J zap-report.json -I'  # Générer un rapport JSON avec l'option -J
+          cmd_options: '-J zap-report.json -I'  
 
       - name: Upload ZAP JSON report to GitHub
         uses: actions/upload-artifact@v4
         with:
           name: zap-json-report
           path: './zap-report.json'
-
+  
       - name: Upload ZAP baseline report to GitHub
         uses: actions/upload-artifact@v4
         with:
